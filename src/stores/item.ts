@@ -10,25 +10,25 @@ export const useItemStore = defineStore('itemStore', {
   },
   actions: {
     async fetchItems() {
-      const response = await axios.get('https://playground.mockoon.com/movies')
-      this.items = response.data
+      const res = await axios.get('https://playground.mockoon.com/movies')
+      this.items = res.data
     },
     async fetchItem(id: string) {
-      const response = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
-      return response.data
+      const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
+      return res.data
     },
     async createItem(item: Omit<Item, 'id'>) {
-      const response = await axios.post<Item>('https://playground.mockoon.com/movies', item)
-      this.items.push(response.data)
+      const res = await axios.post<Item>('https://playground.mockoon.com/movies', item)
+      this.items.push(res.data)
     },
     async editItem(updatedItem: Item) {
-      const response = await axios.put<Item>(
+      const res = await axios.put<Item>(
         `https://playground.mockoon.com/movies/${updatedItem.id}`,
         updatedItem
       )
       const index = this.items.findIndex((item: any) => item.id === updatedItem.id)
       if (index !== -1) {
-        this.items[index] = response.data
+        this.items[index] = res.data
       }
     },
     async removeItem(id: string) {

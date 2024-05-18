@@ -2,7 +2,7 @@
   <div>
     <h1>{{ isEdit ? 'Edit Item' : 'Create Item' }}</h1>
     <form @submit.prevent="handleSubmit">
-      <input v-model="title" placeholder="Movie Title" required />
+      <input v-model="title" placeholder="Title" required />
       <input v-model="genre" placeholder="Genre" required />
       <input v-model="director" placeholder="Director" required />
       <input v-model="releaseYear" placeholder="Release Year" type="number" required />
@@ -22,7 +22,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useItemStore } from '../stores/item'
 
 export default defineComponent({
-  // eslint-disable-next-line vue/multi-word-component-names
+  // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
   name: 'Form',
   props: {
     isEdit: {
@@ -40,7 +40,6 @@ export default defineComponent({
     const releaseYear = ref<number | null>(null)
     const rating = ref<number | null>(null)
     const isPopular = ref(false)
-
     const id = route.params.id as string
     const updateStatus = ref<'idle' | 'success' | 'error'>('idle')
 

@@ -1,20 +1,18 @@
 <template>
   <div>
-    <h1>Item Details</h1>
+    <h1>Item Detail</h1>
     <div v-if="item">
       <p><strong>Title:</strong> {{ item.title }}</p>
       <p><strong>Genre:</strong> {{ item.genre }}</p>
       <p><strong>Director:</strong> {{ item.director }}</p>
       <p><strong>Release Year:</strong> {{ item.releaseYear }}</p>
       <p><strong>Rating:</strong> {{ item.rating }}</p>
-      <p><strong>Popular:</strong> {{ item.isPopular }}</p>
+      <p><strong>Popular:</strong> {{ item.isPopular ? 'Yes' : 'No'}}</p>
       <button @click="editItem()">Edit</button>
       <button @click="confirmDelete()">Delete</button>
-      <!-- <router-link :to="{ name: 'Edit', params: { id: item.id } }">Edit</router-link>
-      <button @click="deleteItem(item.id)">Delete</button> -->
     </div>
     <div v-else>
-      <p>Not found</p>
+      <p>Not found item</p>
     </div>
   </div>
 </template>
@@ -25,8 +23,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { type Item, useItemStore } from '../stores/item'
 
 export default defineComponent({
+  // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
   name: 'Details',
-  // props: ['id'],
   setup() {
     const route = useRoute()
     const router = useRouter()
