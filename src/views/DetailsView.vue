@@ -1,18 +1,20 @@
 <template>
-  <div>
+  <div class="details-container">
     <h1>Item Detail</h1>
-    <div v-if="item">
+    <div v-if="item" class="item-details">
       <p><strong>Title:</strong> {{ item.title }}</p>
       <p><strong>Genre:</strong> {{ item.genre }}</p>
       <p><strong>Director:</strong> {{ item.director }}</p>
       <p><strong>Release Year:</strong> {{ item.releaseYear }}</p>
       <p><strong>Rating:</strong> {{ item.rating }}</p>
-      <p><strong>Popular:</strong> {{ item.isPopular ? 'Yes' : 'No'}}</p>
-      <button @click="editItem()">Edit</button>
-      <button @click="confirmDelete()">Delete</button>
+      <p><strong>Popular:</strong> {{ item.isPopular ? 'Yes' : 'No' }}</p>
+      <div class="buttons">
+        <button @click="editItem()" class="btn btn-edit">Edit</button>
+        <button @click="confirmDelete()" class="btn btn-delete">Delete</button>
+      </div>
     </div>
     <div v-else>
-      <p>Not found item</p>
+      <p>Item not found</p>
     </div>
   </div>
 </template>
@@ -65,3 +67,95 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped lang="scss">
+.details-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    text-align: center;
+    color: #42b983;
+    margin-bottom: 20px;
+  }
+
+  .item-details {
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+
+      strong {
+        color: #333;
+      }
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &-edit {
+          background-color: #42b983;
+          color: #fff;
+
+          &:hover {
+            background-color: #369d77;
+          }
+        }
+
+        &-delete {
+          background-color: #ff4b5c;
+          color: #fff;
+
+          &:hover {
+            background-color: #e04150;
+          }
+        }
+      }
+    }
+  }
+
+  p {
+    text-align: center;
+    color: #42b983;
+  }
+}
+
+@media (max-width: 768px) {
+  .details-container {
+    margin: 20px;
+    padding: 15px;
+  }
+
+  .item-details {
+    p {
+      font-size: 14px;
+    }
+
+    .buttons {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+</style>
