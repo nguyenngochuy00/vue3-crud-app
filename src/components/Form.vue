@@ -35,10 +35,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { defineComponent, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useItemStore } from '../stores/item'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useForm, useField, ErrorMessage } from 'vee-validate'
 import * as yup from 'yup'
 
@@ -52,12 +51,10 @@ export default defineComponent({
       default: false
     }
   },
-  setup(props) {
+  setup(props, { emit }) {
     const itemStore = useItemStore()
-    const router = useRouter()
     const route = useRoute()
     const id = route.params.id as string
-    const updateStatus = ref<'idle' | 'success' | 'error'>('idle')
 
     const schema = yup.object({
       title: yup.string().required('Title is required'),
@@ -116,19 +113,7 @@ export default defineComponent({
     onMounted(fetchItem)
 
     const submitForm = handleSubmit(async (values) => {
-      if (props.isEdit) {
-        try {
-          await itemStore.editItem({ id, ...values })
-          updateStatus.value = 'success'
-          router.push(`/details/${id}`)
-        } catch (error) {
-          updateStatus.value = 'error'
-        }
-      } else {
-        await itemStore.createItem(values)
-        resetForm()
-        router.push('/home')
-      }
+      emit('submitForm', { isEdit: props.isEdit, id, values })
     })
 
     return {

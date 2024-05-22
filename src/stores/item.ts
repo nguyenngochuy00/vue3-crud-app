@@ -22,8 +22,12 @@ export const useItemStore = defineStore('itemStore', {
     //   this.totalItems = response.data
     // },
     async fetchItem(id: string) {
-      const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
-      return res.data
+      try {
+        const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
+        return res.data
+      } catch (err) {
+        console.error(err)
+      }
     },
     async createItem(item: Omit<Item, 'id'>) {
       const res = await axios.post<Item>('https://playground.mockoon.com/movies', item)
