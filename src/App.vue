@@ -24,7 +24,6 @@ $hover-bg-color: #42b983;
 $hover-text-color: #fff;
 $margin-top: 60px;
 $padding: 20px;
-$nav-margin-bottom: 30px;
 $link-margin: 0 15px;
 $link-padding: 10px 15px;
 $border-radius: 5px;
@@ -38,9 +37,11 @@ $transition-duration: 0.3s;
   color: $color-text;
   margin-top: $margin-top;
   padding: $padding;
+  display: block;
 
   nav {
-    margin-bottom: $nav-margin-bottom;
+    width: 100%;
+    margin-bottom: $margin-top;
 
     a {
       font-weight: bold;

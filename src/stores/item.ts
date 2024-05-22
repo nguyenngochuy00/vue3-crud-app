@@ -5,7 +5,8 @@ import { defineStore } from 'pinia'
 export const useItemStore = defineStore('itemStore', {
   state: () => {
     return {
-      items: <Item[]>[]
+      items: <Item[]>[],
+      totalItems: 0
     }
   },
   actions: {
@@ -13,6 +14,13 @@ export const useItemStore = defineStore('itemStore', {
       const res = await axios.get('https://playground.mockoon.com/movies')
       this.items = res.data
     },
+    // async fetchItems(page: number, limit: number) {
+    //   const response = await axios.get(
+    //     `https://playground.mockoon.com/movies?page=${page}&limit=${limit}`
+    //   )
+    //   this.items = response.data
+    //   this.totalItems = response.data
+    // },
     async fetchItem(id: string) {
       const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
       return res.data

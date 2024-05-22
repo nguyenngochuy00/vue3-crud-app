@@ -1,6 +1,6 @@
 <template>
   <div class="user">
-    <h1>HuyNN</h1>
+    <h1>HuyNN45</h1>
     <router-view></router-view>
   </div>
 </template>

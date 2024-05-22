@@ -1,34 +1,27 @@
 <template>
   <div class="form-container">
+    <h1>HuyNN45</h1>
     <h1>{{ isEdit ? 'Edit Item' : 'Create Item' }}</h1>
-    <form @submit.prevent="handleSubmit" class="item-form">
+    <form @submit.prevent="submitForm" class="item-form">
       <div class="form-group">
-        <input v-model="title" placeholder="Title" required class="form-input" />
+        <input v-model="title" placeholder="Title" type="text" class="form-input" />
+        <ErrorMessage name="title" class="form-error" />
       </div>
       <div class="form-group">
-        <input v-model="genre" placeholder="Genre" required class="form-input" />
+        <input v-model="genre" placeholder="Genre" type="text" class="form-input" />
+        <ErrorMessage name="genre" class="form-error" />
       </div>
       <div class="form-group">
-        <input v-model="director" placeholder="Director" required class="form-input" />
+        <input v-model="director" placeholder="Director" type="text" class="form-input" />
+        <ErrorMessage name="director" class="form-error" />
       </div>
       <div class="form-group">
-        <input
-          v-model="releaseYear"
-          placeholder="Release Year"
-          type="number"
-          required
-          class="form-input"
-        />
+        <input v-model="releaseYear" placeholder="Release Year" type="number" class="form-input" />
+        <ErrorMessage name="releaseYear" class="form-error" />
       </div>
       <div class="form-group">
-        <input
-          v-model="rating"
-          placeholder="Rating"
-          type="number"
-          step="0.1"
-          required
-          class="form-input"
-        />
+        <input v-model="rating" placeholder="Rating" type="number" step="0.1" class="form-input" />
+        <ErrorMessage name="rating" class="form-error" />
       </div>
       <div class="form-group form-checkbox">
         <label>
@@ -45,10 +38,14 @@
 import { defineComponent, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useItemStore } from '../stores/item'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useForm, useField, ErrorMessage } from 'vee-validate'
+import * as yup from 'yup'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names, vue/no-reserved-component-names
   name: 'Form',
+  components: { ErrorMessage },
   props: {
     isEdit: {
       type: Boolean,
@@ -59,67 +56,80 @@ export default defineComponent({
     const itemStore = useItemStore()
     const router = useRouter()
     const route = useRoute()
-    const title = ref('')
-    const genre = ref('')
-    const director = ref('')
-    const releaseYear = ref<number | null>(null)
-    const rating = ref<number | null>(null)
-    const isPopular = ref(false)
     const id = route.params.id as string
     const updateStatus = ref<'idle' | 'success' | 'error'>('idle')
+
+    const schema = yup.object({
+      title: yup.string().required('Title is required'),
+      genre: yup.string().required('Genre is required'),
+      director: yup.string().required('Director is required'),
+      releaseYear: yup
+        .number()
+        .required('Release Year is required')
+        .min(1888, 'Year must be after 1888')
+        .max(new Date().getFullYear(), 'Year must be this year or earlier'),
+      rating: yup
+        .number()
+        .required('Rating is required')
+        .min(0, 'Rating must be at least 0')
+        .max(10, 'Rating must be at most 10'),
+      isPopular: yup.boolean()
+    })
+
+    const { handleSubmit, resetForm, errors } = useForm({
+      validationSchema: schema,
+      initialValues: {
+        title: '',
+        genre: '',
+        director: '',
+        releaseYear: 0,
+        rating: 0,
+        isPopular: false
+      }
+    })
+
+    const { value: title } = useField('title')
+    const { value: genre } = useField('genre')
+    const { value: director } = useField('director')
+    const { value: releaseYear } = useField('releaseYear')
+    const { value: rating } = useField('rating')
+    const { value: isPopular } = useField('isPopular')
 
     const fetchItem = async () => {
       if (props.isEdit) {
         const fetchedItem = await itemStore.fetchItem(id)
         if (fetchedItem) {
-          title.value = fetchedItem.title
-          genre.value = fetchedItem.genre
-          director.value = fetchedItem.director
-          releaseYear.value = fetchedItem.releaseYear
-          rating.value = fetchedItem.rating
-          isPopular.value = fetchedItem.isPopular
+          resetForm({
+            values: {
+              title: fetchedItem.title,
+              genre: fetchedItem.genre,
+              director: fetchedItem.director,
+              releaseYear: fetchedItem.releaseYear,
+              rating: fetchedItem.rating,
+              isPopular: fetchedItem.isPopular
+            }
+          })
         }
       }
     }
 
     onMounted(fetchItem)
 
-    const handleSubmit = async () => {
+    const submitForm = handleSubmit(async (values) => {
       if (props.isEdit) {
         try {
-          // Edit item using the updated values from the form
-          await itemStore.editItem({
-            id,
-            title: title.value,
-            genre: genre.value,
-            director: director.value,
-            releaseYear: releaseYear.value!,
-            rating: rating.value!,
-            isPopular: isPopular.value
-          })
+          await itemStore.editItem({ id, ...values })
           updateStatus.value = 'success'
           router.push(`/details/${id}`)
         } catch (error) {
           updateStatus.value = 'error'
         }
       } else {
-        await itemStore.createItem({
-          title: title.value,
-          genre: genre.value,
-          director: director.value,
-          releaseYear: releaseYear.value!,
-          rating: rating.value!,
-          isPopular: isPopular.value
-        })
-        title.value = ''
-        genre.value = ''
-        director.value = ''
-        releaseYear.value = 0
-        rating.value = 0
-        isPopular.value = false
+        await itemStore.createItem(values)
+        resetForm()
         router.push('/home')
       }
-    }
+    })
 
     return {
       title,
@@ -128,7 +138,8 @@ export default defineComponent({
       releaseYear,
       rating,
       isPopular,
-      handleSubmit
+      submitForm,
+      errors
     }
   }
 })
@@ -169,6 +180,12 @@ export default defineComponent({
           border-color: #42b983;
           outline: none;
         }
+      }
+
+      .form-error {
+        color: #ff0000;
+        font-size: 12px;
+        margin-top: 5px;
       }
     }
 

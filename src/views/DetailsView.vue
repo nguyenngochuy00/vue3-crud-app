@@ -2,12 +2,32 @@
   <div class="details-container">
     <h1>Item Detail</h1>
     <div v-if="item" class="item-details">
-      <p><strong>Title:</strong> {{ item.title }}</p>
-      <p><strong>Genre:</strong> {{ item.genre }}</p>
-      <p><strong>Director:</strong> {{ item.director }}</p>
-      <p><strong>Release Year:</strong> {{ item.releaseYear }}</p>
-      <p><strong>Rating:</strong> {{ item.rating }}</p>
-      <p><strong>Popular:</strong> {{ item.isPopular ? 'Yes' : 'No' }}</p>
+      <table>
+        <tr>
+          <td><strong>Title:</strong></td>
+          <td>{{ item.title }}</td>
+        </tr>
+        <tr>
+          <td><strong>Genre:</strong></td>
+          <td>{{ item.genre }}</td>
+        </tr>
+        <tr>
+          <td><strong>Director:</strong></td>
+          <td>{{ item.director }}</td>
+        </tr>
+        <tr>
+          <td><strong>Release Year:</strong></td>
+          <td>{{ item.releaseYear }}</td>
+        </tr>
+        <tr>
+          <td><strong>Rating:</strong></td>
+          <td>{{ item.rating }}</td>
+        </tr>
+        <tr>
+          <td><strong>Popular:</strong></td>
+          <td>{{ item.isPopular ? 'Yes' : 'No' }}</td>
+        </tr>
+      </table>
       <div class="buttons">
         <button @click="editItem()" class="btn btn-edit">Edit</button>
         <button @click="confirmDelete()" class="btn btn-delete">Delete</button>
@@ -84,9 +104,19 @@ export default defineComponent({
   }
 
   .item-details {
-    p {
-      font-size: 16px;
-      margin: 10px 0;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+
+      tr {
+        border-bottom: 1px solid #ddd;
+      }
+
+      td {
+        padding: 10px;
+        font-size: 16px;
+      }
 
       strong {
         color: #333;
@@ -140,8 +170,10 @@ export default defineComponent({
   }
 
   .item-details {
-    p {
-      font-size: 14px;
+    table {
+      td {
+        font-size: 14px;
+      }
     }
 
     .buttons {

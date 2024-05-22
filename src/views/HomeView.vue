@@ -14,6 +14,7 @@
       <tbody>
         <tr v-for="(item, index) in items" :key="item.id">
           <td>{{ index + 1 }}</td>
+          <!-- <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td> -->
           <td>{{ item.title }}</td>
           <td>{{ item.genre }}</td>
           <td>{{ item.director }}</td>
@@ -23,11 +24,15 @@
         </tr>
       </tbody>
     </table>
+    <div class="pagination-controls">
+      <button @click="prevPage" :disabled="currentPage === 1">Previous Page</button>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Next Page</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, onMounted, ref, computed } from 'vue'
 import { useItemStore } from '../stores/item'
 import { storeToRefs } from 'pinia'
 
@@ -36,17 +41,40 @@ export default defineComponent({
   name: 'Home',
   setup() {
     const itemStore = useItemStore()
+    const { items, totalItems } = storeToRefs(itemStore)
 
-    const fetchItem = () => {
-      itemStore.fetchItems()
+    const currentPage = ref(1)
+    const itemsPerPage = 10 // Set your items per page limit
+
+    const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
+
+    const fetchItems = async () => {
+      // await itemStore.fetchItems(currentPage.value, itemsPerPage)
+      await itemStore.fetchItems()
     }
 
-    onMounted(fetchItem)
+    const prevPage = async () => {
+      if (currentPage.value > 1) {
+        currentPage.value -= 1
+        await fetchItems()
+      }
+    }
 
-    const { items } = storeToRefs(itemStore)
+    const nextPage = async () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value += 1
+        await fetchItems()
+      }
+    }
+
+    onMounted(fetchItems)
 
     return {
-      items
+      items,
+      currentPage,
+      totalPages,
+      prevPage,
+      nextPage
     }
   }
 })
@@ -127,6 +155,30 @@ table {
 
   &:hover {
     color: $text-color;
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  button {
+    background-color: #42b983;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:disabled {
+      background-color: #ddd;
+      cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+      background-color: darken(#42b983, 10%);
+    }
   }
 }
 </style>
