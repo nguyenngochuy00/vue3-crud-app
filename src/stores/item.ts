@@ -10,21 +10,21 @@ export const useItemStore = defineStore('itemStore', {
     }
   },
   actions: {
-    async fetchItems() {
-      try {
-        const res = await axios.get('https://playground.mockoon.com/movies')
-        this.items = res.data
-      } catch (error) {
-        console.error('Failed to fetch items', error)
-      }
-    },
-    // async fetchItems(page: number, limit: number) {
-    //   const response = await axios.get(
-    //     `https://playground.mockoon.com/movies?page=${page}&limit=${limit}`
-    //   )
-    //   this.items = response.data
-    //   this.totalItems = response.data
+    // async fetchItems() {
+    //   try {
+    //     const res = await axios.get('https://playground.mockoon.com/movies')
+    //     this.items = res.data
+    //   } catch (error) {
+    //     console.error('Failed to fetch items', error)
+    //   }
     // },
+    async fetchItems(page: number, limit: number) {
+      const response = await axios.get(
+        `https://playground.mockoon.com/movies?page=${page}&limit=${limit}`
+      )
+      this.items = response.data
+      this.totalItems = response.data
+    },
     async fetchItem(id: string) {
       try {
         const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)

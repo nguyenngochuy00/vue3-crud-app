@@ -13,20 +13,23 @@
       </thead>
       <tbody>
         <tr v-for="(item, index) in items" :key="item.id">
-          <td>{{ index + 1 }}</td>
-          <!-- <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td> -->
-          <td>{{ item.title }}</td>
+          <td>{{ (currentPage - 1) * itemsPerPage + index + 1 }}</td>
+          <td>
+            <router-link :to="`/details/${item.id}`" class="title">{{ item.title }}</router-link>
+          </td>
           <td>{{ item.genre }}</td>
           <td>{{ item.director }}</td>
           <td>
-            <router-link :to="`/details/${item.id}`" class="actions">Detail</router-link>
+            <!-- <router-link :to="`/details/${item.id}`" class="actions">Detail</router-link> -->
+            <button @click="editItem(item.id)" class="actions edit">Edit</button>
+            <button @click="confirmDelete(item.id)" class="actions delete">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
     <div class="pagination-controls">
       <button @click="prevPage" :disabled="currentPage === 1">Previous Page</button>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next Page</button>
+      <button @click="nextPage" :disabled="currentPage >= 10">Next Page</button>
     </div>
   </div>
 </template>
@@ -35,22 +38,23 @@
 import { defineComponent, onMounted, ref, computed } from 'vue'
 import { useItemStore } from '../stores/item'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 
 export default defineComponent({
   // eslint-disable-next-line vue/multi-word-component-names
   name: 'Home',
   setup() {
+    const router = useRouter()
     const itemStore = useItemStore()
     const { items, totalItems } = storeToRefs(itemStore)
 
     const currentPage = ref(1)
     const itemsPerPage = 10 // Set your items per page limit
-
     const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
 
     const fetchItems = async () => {
-      // await itemStore.fetchItems(currentPage.value, itemsPerPage)
-      await itemStore.fetchItems()
+      await itemStore.fetchItems(currentPage.value, itemsPerPage)
+      // await itemStore.fetchItems()
     }
 
     const prevPage = async () => {
@@ -61,9 +65,34 @@ export default defineComponent({
     }
 
     const nextPage = async () => {
-      if (currentPage.value < totalPages.value) {
-        currentPage.value += 1
+      currentPage.value += 1
+      await fetchItems()
+    }
+
+    const editItem = (id: number) => {
+      try {
+        router.push(`/edit/${id}`)
+      } catch (error) {
+        console.error('Failed to edit item', error)
+      }
+    }
+
+    const deleteItem = async (id: number) => {
+      try {
+        await itemStore.removeItem(id)
         await fetchItems()
+      } catch (error) {
+        console.error('Failed to delete item', error)
+      }
+    }
+
+    const confirmDelete = async (id: number) => {
+      try {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+          await deleteItem(id)
+        }
+      } catch (error) {
+        console.error('Failed to confirm delete', error)
       }
     }
 
@@ -71,7 +100,10 @@ export default defineComponent({
 
     return {
       items,
+      editItem,
+      confirmDelete,
       currentPage,
+      itemsPerPage,
       totalPages,
       prevPage,
       nextPage
@@ -82,6 +114,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 $primary-color: #42b983;
+$danger-color: #e74c3c;
+$success-color: #2ecc71;
 $text-color: #2c3e50;
 $background-color: #fff;
 $hover-background-color: #f1f1f1;
@@ -151,10 +185,29 @@ table {
   color: $primary-color;
   text-decoration: none;
   font-weight: bold;
-  transition: color 0.3s;
+  padding: $small-padding;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 5px;
 
-  &:hover {
-    color: $text-color;
+  &.edit {
+    background-color: $success-color;
+    color: #fff;
+    margin-right: 5px;
+
+    &:hover {
+      background-color: darken($success-color, 10%);
+    }
+  }
+
+  &.delete {
+    background-color: $danger-color;
+    color: #fff;
+
+    &:hover {
+      background-color: darken($danger-color, 10%);
+    }
   }
 }
 
