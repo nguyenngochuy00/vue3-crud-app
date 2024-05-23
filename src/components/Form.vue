@@ -94,18 +94,22 @@ export default defineComponent({
 
     const fetchItem = async () => {
       if (props.isEdit) {
-        const fetchedItem = await itemStore.fetchItem(id)
-        if (fetchedItem) {
-          resetForm({
-            values: {
-              title: fetchedItem.title,
-              genre: fetchedItem.genre,
-              director: fetchedItem.director,
-              releaseYear: fetchedItem.releaseYear,
-              rating: fetchedItem.rating,
-              isPopular: fetchedItem.isPopular
-            }
-          })
+        try {
+          const fetchedItem = await itemStore.fetchItem(id)
+          if (fetchedItem) {
+            resetForm({
+              values: {
+                title: fetchedItem.title,
+                genre: fetchedItem.genre,
+                director: fetchedItem.director,
+                releaseYear: fetchedItem.releaseYear,
+                rating: fetchedItem.rating,
+                isPopular: fetchedItem.isPopular
+              }
+            })
+          }
+        } catch (error) {
+          console.error('Failed to fetch item', error)
         }
       }
     }
@@ -113,7 +117,11 @@ export default defineComponent({
     onMounted(fetchItem)
 
     const submitForm = handleSubmit(async (values) => {
-      emit('submitForm', { isEdit: props.isEdit, id, values })
+      try {
+        emit('submitForm', { isEdit: props.isEdit, id, values })
+      } catch (error) {
+        console.error('Failed to submit form', error)
+      }
     })
 
     return {

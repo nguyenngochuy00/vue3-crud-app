@@ -11,8 +11,12 @@ export const useItemStore = defineStore('itemStore', {
   },
   actions: {
     async fetchItems() {
-      const res = await axios.get('https://playground.mockoon.com/movies')
-      this.items = res.data
+      try {
+        const res = await axios.get('https://playground.mockoon.com/movies')
+        this.items = res.data
+      } catch (error) {
+        console.error('Failed to fetch items', error)
+      }
     },
     // async fetchItems(page: number, limit: number) {
     //   const response = await axios.get(
@@ -25,27 +29,39 @@ export const useItemStore = defineStore('itemStore', {
       try {
         const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
         return res.data
-      } catch (err) {
-        console.error(err)
+      } catch (error) {
+        console.error('Failed to fetch item', error)
       }
     },
     async createItem(item: Omit<Item, 'id'>) {
-      const res = await axios.post<Item>('https://playground.mockoon.com/movies', item)
-      this.items.push(res.data)
+      try {
+        const res = await axios.post<Item>('https://playground.mockoon.com/movies', item)
+        this.items.push(res.data)
+      } catch (error) {
+        console.error('Failed to create item', error)
+      }
     },
     async editItem(updatedItem: Item) {
-      const res = await axios.put<Item>(
-        `https://playground.mockoon.com/movies/${updatedItem.id}`,
-        updatedItem
-      )
-      const index = this.items.findIndex((item: any) => item.id === updatedItem.id)
-      if (index !== -1) {
-        this.items[index] = res.data
+      try {
+        const res = await axios.put<Item>(
+          `https://playground.mockoon.com/movies/${updatedItem.id}`,
+          updatedItem
+        )
+        const index = this.items.findIndex((item: any) => item.id === updatedItem.id)
+        if (index !== -1) {
+          this.items[index] = res.data
+        }
+      } catch (error) {
+        console.error('Failed to edit item', error)
       }
     },
     async removeItem(id: string) {
-      await axios.delete(`https://playground.mockoon.com/movies/${id}`)
-      this.items = this.items.filter((item: any) => item.id !== id)
+      try {
+        await axios.delete(`https://playground.mockoon.com/movies/${id}`)
+        this.items = this.items.filter((item: any) => item.id !== id)
+      } catch (error) {
+        console.error('Failed to remove item', error)
+      }
     }
   }
 })

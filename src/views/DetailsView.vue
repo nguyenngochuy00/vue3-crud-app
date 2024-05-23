@@ -54,28 +54,44 @@ export default defineComponent({
     const item = ref<Item | null>(null)
 
     const fetchItem = async () => {
-      const fetchedItem = await itemStore.fetchItem(route.params.id as string)
-      item.value = fetchedItem
+      try {
+        const fetchedItem = await itemStore.fetchItem(route.params.id as string)
+        item.value = fetchedItem
+      } catch (error) {
+        console.error('Failed to fetch item', error)
+      }
     }
 
     onMounted(fetchItem)
 
     const editItem = () => {
-      if (item.value) {
-        router.push(`/edit/${item.value.id}`)
+      try {
+        if (item.value) {
+          router.push(`/edit/${item.value.id}`)
+        }
+      } catch (error) {
+        console.error('Failed to edit item', error)
       }
     }
 
     const deleteItem = () => {
-      if (item.value) {
-        itemStore.removeItem(item.value.id)
-        router.push('/home')
+      try {
+        if (item.value) {
+          itemStore.removeItem(item.value.id)
+          router.push('/home')
+        }
+      } catch (error) {
+        console.error('Failed to delete item', error)
       }
     }
 
     const confirmDelete = () => {
-      if (window.confirm('Are you sure you want to delete this item?')) {
-        deleteItem()
+      try {
+        if (window.confirm('Are you sure you want to delete this item?')) {
+          deleteItem()
+        }
+      } catch (error) {
+        console.error('Failed to confirm delete', error)
       }
     }
 
