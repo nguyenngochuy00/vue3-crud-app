@@ -23,7 +23,7 @@ export default defineComponent({
     const route = useRoute()
     const id = route.params.id as string
 
-    const handleFormSubmit = async ({ values }) => {
+    const handleFormSubmit = async ({ values }: any) => {
       try {
         await itemStore.editItem({ id, ...values })
         router.push(`/details/${id}`)

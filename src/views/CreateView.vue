@@ -21,7 +21,7 @@ export default defineComponent({
     const itemStore = useItemStore()
     const router = useRouter()
 
-    const handleFormSubmit = async ({ values }) => {
+    const handleFormSubmit = async ({ values }: any) => {
       try {
         await itemStore.createItem(values)
         router.push('/home')

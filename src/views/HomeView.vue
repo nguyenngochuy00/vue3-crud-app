@@ -115,7 +115,7 @@ export default defineComponent({
 <style scoped lang="scss">
 $primary-color: #42b983;
 $danger-color: #e74c3c;
-$success-color: #2ecc71;
+$success-color: #42b983;
 $text-color: #2c3e50;
 $background-color: #fff;
 $hover-background-color: #f1f1f1;
@@ -223,6 +223,7 @@ table {
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+    border-radius: 5px;
 
     &:disabled {
       background-color: #ddd;

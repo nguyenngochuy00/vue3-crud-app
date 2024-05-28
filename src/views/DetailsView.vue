@@ -112,6 +112,7 @@ export default defineComponent({
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
 
   h1 {
     text-align: center;
@@ -132,6 +133,7 @@ export default defineComponent({
       td {
         padding: 10px;
         font-size: 16px;
+        text-align: left;
       }
 
       strong {

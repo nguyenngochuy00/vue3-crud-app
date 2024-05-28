@@ -147,6 +147,7 @@ export default defineComponent({
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: left;
+  width: 100vw;
 
   h1 {
     text-align: center;

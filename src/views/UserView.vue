@@ -20,7 +20,7 @@ $border-radius: 10px;
 $margin: 20px;
 $padding: 20px;
 $max-width: 100%;
-$width: 90%;
+$width: 100vw;
 $h1-margin-bottom: 20px;
 
 .user {
