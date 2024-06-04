@@ -20,7 +20,6 @@
           <td>{{ item.genre }}</td>
           <td>{{ item.director }}</td>
           <td>
-            <!-- <router-link :to="`/details/${item.id}`" class="actions">Detail</router-link> -->
             <button @click="editItem(item.id)" class="actions edit">Edit</button>
             <button @click="confirmDelete(item.id)" class="actions delete">Delete</button>
           </td>
@@ -29,7 +28,15 @@
     </table>
     <div class="pagination-controls">
       <button @click="prevPage" :disabled="currentPage === 1">Previous Page</button>
-      <button @click="nextPage" :disabled="currentPage >= 10">Next Page</button>
+      <div class="items-per-page">
+        <label for="itemsPerPage">Items per page:</label>
+        <select id="itemsPerPage" v-model="itemsPerPage" @change="fetchItems">
+          <option v-for="option in itemsPerPageOptions" :key="option" :value="option">
+            {{ option }}
+          </option>
+        </select>
+      </div>
+      <button @click="nextPage" :disabled="currentPage >= totalPages">Next Page</button>
     </div>
   </div>
 </template>
@@ -49,12 +56,12 @@ export default defineComponent({
     const { items, totalItems } = storeToRefs(itemStore)
 
     const currentPage = ref(1)
-    const itemsPerPage = 10 // Set your items per page limit
-    const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
+    const itemsPerPageOptions = [10, 20, 50]
+    const itemsPerPage = ref(10) // Default to 10 items per page
+    const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value))
 
     const fetchItems = async () => {
-      await itemStore.fetchItems(currentPage.value, itemsPerPage)
-      // await itemStore.fetchItems()
+      await itemStore.fetchItems(currentPage.value, itemsPerPage.value)
     }
 
     const prevPage = async () => {
@@ -106,7 +113,9 @@ export default defineComponent({
       itemsPerPage,
       totalPages,
       prevPage,
-      nextPage
+      nextPage,
+      itemsPerPageOptions,
+      fetchItems
     }
   }
 })
@@ -215,6 +224,18 @@ table {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+
+  .items-per-page {
+    label {
+      margin-right: 10px;
+    }
+
+    select {
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid $border-color;
+    }
+  }
 
   button {
     background-color: #42b983;

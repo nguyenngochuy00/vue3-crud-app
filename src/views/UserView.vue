@@ -40,6 +40,7 @@ $h1-margin-bottom: 20px;
   h1 {
     color: $primary-color;
     margin-bottom: $h1-margin-bottom;
+    font-weight: bold;
   }
 }
 </style>

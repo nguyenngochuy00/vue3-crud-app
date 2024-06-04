@@ -19,12 +19,17 @@ export const useItemStore = defineStore('itemStore', {
     //   }
     // },
     async fetchItems(page: number, limit: number) {
-      const response = await axios.get(
-        `https://playground.mockoon.com/movies?page=${page}&limit=${limit}`
-      )
-      this.items = response.data
-      this.totalItems = response.data
+      try {
+        const response = await axios.get(
+          `https://playground.mockoon.com/movies?page=${page}&limit=${limit}`
+        )
+        this.items = response.data
+        this.totalItems = response.data
+      } catch (error) {
+        console.error('Failed to fetch items', error)
+      }
     },
+
     async fetchItem(id: string) {
       try {
         const res = await axios.get<Item>(`https://playground.mockoon.com/movies/${id}`)
@@ -33,6 +38,7 @@ export const useItemStore = defineStore('itemStore', {
         console.error('Failed to fetch item', error)
       }
     },
+
     async createItem(item: Omit<Item, 'id'>) {
       try {
         const res = await axios.post<Item>('https://playground.mockoon.com/movies', item)
@@ -41,6 +47,7 @@ export const useItemStore = defineStore('itemStore', {
         console.error('Failed to create item', error)
       }
     },
+
     async editItem(updatedItem: Item) {
       try {
         const res = await axios.put<Item>(
@@ -55,6 +62,7 @@ export const useItemStore = defineStore('itemStore', {
         console.error('Failed to edit item', error)
       }
     },
+
     async removeItem(id: string) {
       try {
         await axios.delete(`https://playground.mockoon.com/movies/${id}`)

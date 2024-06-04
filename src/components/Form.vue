@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <h1>HuyNN45</h1>
+    <h1 class="user-app">HuyNN45</h1>
     <h1>{{ isEdit ? 'Edit Item' : 'Create Item' }}</h1>
     <form @submit.prevent="submitForm" class="item-form">
       <div class="form-group">
@@ -153,6 +153,10 @@ export default defineComponent({
     text-align: center;
     color: #42b983;
     margin-bottom: 20px;
+  }
+
+  .user-app {
+    font-weight: bold;
   }
 
   .item-form {

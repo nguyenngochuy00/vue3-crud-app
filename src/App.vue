@@ -44,6 +44,7 @@ $transition-duration: 0.3s;
     margin-bottom: $margin-top;
 
     a {
+      font-size: large;
       font-weight: bold;
       color: $color-primary;
       text-decoration: none;
